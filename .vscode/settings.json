@@ -1,0 +1,17 @@
+{
+    "editor.formatOnSave": true,
+    "prettier.singleQuote": true,
+    "prettier.printWidth": 120,
+    "prettier.trailingComma": "es5",
+    "prettier.tabWidth": 4,
+    "prettier.jsxSingleQuote": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "npm-scripts.showStartNotification": false,
+    "liveServer.settings.port": 5501,
+    "liveServer.settings.https": {
+        "enable": false, //set it true to enable the feature.
+        "cert": "C:\\https\\server.cert", //full path
+        "key": "C:\\https\\server.key", //full path
+        "passphrase": "12345"
+    }
+}
