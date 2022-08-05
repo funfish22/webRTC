@@ -9,6 +9,30 @@
     </head>
     <body>
         <div id="mask">裝置使用許可確認</div>
+        <div class="local-Video">
+            <video id="local_video" autoplay muted></video>
+        </div>
+        <div class="select-device">
+            <label>
+                <span>視訊裝置選擇</span>
+                <select name="selectVideo" id="selectVideo" class="selectVideo"></select>
+            </label>
+            <label>
+                <span>麥克風裝置選擇</span>
+                <select name="selectAudio" id="selectAudio" class="selectAudio"></select>
+            </label>
+            <button id="closeButton">關閉視訊</button>
+            <!-- <button id="createRoomButton">創立房間</button> -->
+            <button id="callButton">視訊連接</button>
+            <button id="recorder">錄製影片</button>
+            <button id="closeRecorder">取消錄製影片</button>
+            <button id="pauseRecorder">暫停錄製影片</button>
+        </div>
+        <div class="remote-Video">
+            <video id="remote_video" autoplay></video>
+        </div>
+        <!-- <script src="https://www.gstatic.com/firebasejs/5.5.6/firebase.js"></script> -->
+        <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
         <script src="./script.js"></script>
     </body>
 </html>
