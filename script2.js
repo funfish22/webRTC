@@ -128,6 +128,7 @@ callButton.addEventListener('click', () => {
 const createPeerConnection = () => {
     pc = new RTCPeerConnection();
     pc.onicecandidate = (e) => {
+        console.log('e2', e);
         const message = {
             type: 'candidate',
             candidate: null,
@@ -142,6 +143,19 @@ const createPeerConnection = () => {
     pc.ontrack = (e) => (remoteVideo.srcObject = e.streams[0]);
     localStream.getTracks().forEach((track) => pc.addTrack(track, localStream));
 };
+
+/**
+ * pc1,pc2 => peer-to-peer connection流程
+ * step1: 建立Local peer connection  => signalingState: "statable"
+ * step1.5: 將stream track 與peer connection 透過addTrack()關聯起來，之後建立連結才能進行傳輸！
+ * step2: local peer call createOffer methods to create RTCSessionDescription(SDP) => signalingState: "have-local-offer"
+ * step3: setLocalDescription() is called 然後傳給remote peer
+ * step4: remote peer 收到後透過setRemoteDescription() 建立description for local peer.
+ * step5: 建立成功後local peer會觸發icecandidate event 就能將serialized candidate data 通過signaling channel交付給remote peer
+ * step6: Remote peer 建立createAnswer 將自己的SDP 回傳給Local peer
+ * step7: Local peer收到後透過setRemoteDescription() 建立description for remote peer
+ * Ping ! p2p 完成
+ */
 
 const makeCall = async () => {
     await createPeerConnection();
