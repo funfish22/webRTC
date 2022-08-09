@@ -144,10 +144,10 @@ const makeCall = async () => {
     // 建立點對點串流(RTCPeerConnection)
     await createPeerConnection();
 
-    // 5. 點對點建立完成，Bob 創建一個 offer
+    // 4. 點對點建立完成，Bob 創建一個 offer
     // 並呼叫 setLocalDescription 設定本地的 SDP
     const offer = await pc.createOffer();
-    // 6. 通過 Signaling server(信令服務器) 將包含 Bob SDP 的 offer 發送給 Alice。
+    // 5. 通過 Signaling server(信令服務器) 將包含 Bob SDP 的 offer 發送給 Alice。
     signaling.postMessage({ type: 'offer', sdp: offer.sdp });
     await pc.setLocalDescription(offer);
 };
@@ -157,14 +157,14 @@ const createPeerConnection = () => {
     pc = new RTCPeerConnection();
     // 2. 綁定onicecandidate事件
     // 3. 當查找到相對應的遠端端口時會做 onIceCandidate callback function 進行網路資訊的共享
-    // 11. 當雙方都連線才會做以下動作
+    // 10. 當雙方都連線才會做以下動作
     pc.onicecandidate = (e) => {
         const message = {
             type: 'candidate',
             candidate: null,
         };
         if (e.candidate) {
-            // alice 者描述訊息
+            // alice(Bob) 者描述訊息
             message.candidate = e.candidate.candidate;
             // bob 與 alice 相關的媒體流的識別標籤
             message.sdpMid = e.candidate.sdpMid;
@@ -173,15 +173,15 @@ const createPeerConnection = () => {
         }
         signaling.postMessage(message);
     };
-    // 藉由綁定 ontrack 來接收 Alice 傳遞過來的多媒體資訊
+    // 12. 雙方訊息(offer/answer)交換完畢
+    // 13. 藉由綁定 ontrack 來接收 Alice(Bob) 傳遞過來的多媒體資訊，顯示對方視訊到畫面
     pc.ontrack = (e) => (remoteVideo.srcObject = e.streams[0]);
-    // Bob 藉由 getTracks 擷取並透過 addTrack 載入多媒體資訊
+    // 14. Bob(Alice) 藉由 getTracks 擷取並透過 addTrack 載入多媒體資訊，顯示本地視訊到畫面
     localStream.getTracks().forEach((track) => pc.addTrack(track, localStream));
 };
 
-// 12. 當 Alice(Bob) 藉由信令服務器接收到由 Bob(Alice) 傳來的 ICE candidate(交換網路連線的建立方式) 時，
+// 11. 當 Alice(Bob) 藉由信令服務器接收到由 Bob(Alice) 傳來的 ICE candidate(交換網路連線的建立方式) 時，
 // 利用 addIceCandidate 將其丟給瀏覽器解析與匹配，查看這個 ICE candidate(交換網路連線的建立方式) 所提供的連線方式適不適合。
-// 匹配就完成雙方連線
 const handleCandidate = async (candidate) => {
     if (!pc) {
         console.error('no peerconnection');
@@ -199,12 +199,12 @@ const handleOffer = async (offer) => {
         console.error('existing peerconnection');
         return;
     }
-    // 7. Alice 也要跟 Bob 確認連線方式
+    // 6. Alice 也要跟 Bob 確認連線方式
     await createPeerConnection();
-    // 8. Alice 收到 offer 後呼叫 setRemoteDescription 設定 Bob 的 SDP。
+    // 7. Alice 收到 offer 後呼叫 setRemoteDescription 設定 Bob 的 SDP。
     await pc.setRemoteDescription(offer);
 
-    // 9. Alice createAnswer 創建一個 answer ，並呼叫 setLocalDescription 設定本地的 SDP。
+    // 8. Alice createAnswer 創建一個 answer ，並呼叫 setLocalDescription 設定本地的 SDP。
     const answer = await pc.createAnswer();
     signaling.postMessage({ type: 'answer', sdp: answer.sdp });
     await pc.setLocalDescription(answer);
@@ -215,7 +215,7 @@ const handleAnswer = async (answer) => {
         console.error('no peerconnection');
         return;
     }
-    // 10. Bob 收到 answer 後呼叫 setRemoteDescription 設定 Alice 的SDP
+    // 9. Bob 收到 answer 後呼叫 setRemoteDescription 設定 Alice 的SDP
     await pc.setRemoteDescription(answer);
 };
 
